@@ -1,0 +1,13 @@
+service:
+  root_username: 'root'
+  root_password: 'root_password'
+
+database:
+  host: 'localhost'
+  port: '27017'
+  user: 'root' 
+  password: 'password123'
+
+encryption:
+  enabled: true
+  secret: 'secret'
