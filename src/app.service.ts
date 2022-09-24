@@ -32,7 +32,7 @@ export class AppService {
     }
 
     this.logger.log('No Settings found! Creating root operator...');
-    const operator = await this.operatorService.setup_createRootOperator();
+    const operator = await this.operatorService.createRootOperator();
     if (operator)
       this.logger.log('Root operator has been created successfully');
 

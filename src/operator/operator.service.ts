@@ -14,7 +14,7 @@ export class OperatorService {
     private privilegeModel: Model<PrivilegeDocument>,
   ) {}
 
-  async setup_createRootOperator(): Promise<OperatorDocument> {
+  async createRootOperator(): Promise<OperatorDocument> {
     const privilege = await this.privilegeModel.create({
       domain: 'all',
       actions: {
