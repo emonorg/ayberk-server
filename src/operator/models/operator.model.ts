@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, Types } from 'mongoose';
+import mongoose, { Document, now } from 'mongoose';
 import { Privilege } from './privilege.model';
 
 export type OperatorDocument = Operator & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Operator {
   @Prop({
     required: true,
+    unique: true,
   })
   username: string;
 
@@ -18,6 +19,7 @@ export class Operator {
 
   @Prop({
     required: true,
+    unique: true,
   })
   name: string;
 
@@ -26,6 +28,12 @@ export class Operator {
     ref: Privilege.name,
   })
   privileges: Privilege[];
+
+  @Prop({ default: now() })
+  createdAt: Date;
+
+  @Prop({ default: now() })
+  updatedAt: Date;
 }
 
 export const OperatorSchema = SchemaFactory.createForClass(Operator);

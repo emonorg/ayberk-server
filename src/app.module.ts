@@ -6,6 +6,8 @@ import configuration from '../config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OperatorModule } from './operator/operator.module';
 import { SettingModule } from './setting/setting.module';
+import { EnvironmentModule } from './environment/environment.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { SettingModule } from './setting/setting.module';
     }),
     OperatorModule,
     SettingModule,
+    EnvironmentModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

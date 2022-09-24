@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, now } from 'mongoose';
 import { Operator } from './operator.model';
 
 export type PrivilegeDocument = Privilege & Document;
@@ -11,7 +11,7 @@ export interface IActions {
   update: boolean;
 }
 
-@Schema()
+@Schema({ timestamps: true })
 export class Privilege {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Operator' })
   operator: Operator;
@@ -26,6 +26,12 @@ export class Privilege {
     type: Object,
   })
   actions: IActions;
+
+  @Prop({ default: now() })
+  createdAt: Date;
+
+  @Prop({ default: now() })
+  updatedAt: Date;
 }
 
 export const PrivilegeSchema = SchemaFactory.createForClass(Privilege);
