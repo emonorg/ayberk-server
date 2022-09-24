@@ -12,7 +12,11 @@ export class AppService {
     this.setupAyberk();
   }
 
+  AYBERK_VERSION = 'beta-0.0.0';
+  startTime = null;
+
   async setupAyberk() {
+    this.startTime = new Date();
     this.logger.log('Check if Ayberk has been setup before...');
     const serviceSetupSuccessful = await this.settingService.getSetting(
       'service.setup.successful',
