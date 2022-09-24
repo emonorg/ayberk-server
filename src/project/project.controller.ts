@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { MongoIdPipe } from 'src/validators/pipes/mongoId.pipe';
 import { CreateProjectDto } from './dtos/createProject.dto';
 import { Project, ProjectDocument } from './models/project.model';
 import { ProjectService } from './project.service';
@@ -19,7 +20,7 @@ export class ProjectController {
 
   @Get('/:id')
   async getProject(
-    @Param('id') id: string,
+    @Param('id', MongoIdPipe) id: string,
   ): Promise<ProjectDocument[] | Project> {
     return await this.projectService.getProjects(id);
   }

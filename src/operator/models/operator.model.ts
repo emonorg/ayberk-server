@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Exclude } from 'class-transformer';
 import mongoose, { Document, now } from 'mongoose';
 import { Privilege } from './privilege.model';
 
@@ -15,6 +16,7 @@ export class Operator {
   @Prop({
     required: true,
   })
+  @Exclude()
   encryptedPassword: string;
 
   @Prop({
@@ -26,6 +28,7 @@ export class Operator {
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Privilege' }],
     ref: Privilege.name,
+    default: [],
   })
   privileges: Privilege[];
 
