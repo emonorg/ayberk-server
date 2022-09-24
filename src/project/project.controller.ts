@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { MongoIdPipe } from 'src/validators/pipes/mongoId.pipe';
 import { CreateProjectDto } from './dtos/createProject.dto';
+import { PatchProjectDto } from './dtos/patchProject.dto';
 import { Project, ProjectDocument } from './models/project.model';
 import { ProjectService } from './project.service';
 
@@ -23,5 +32,20 @@ export class ProjectController {
     @Param('id', MongoIdPipe) id: string,
   ): Promise<ProjectDocument[] | Project> {
     return await this.projectService.getProjects(id);
+  }
+
+  @Patch('/:id')
+  async patchProject(
+    @Param('id', MongoIdPipe) id: string,
+    @Body() dto: PatchProjectDto,
+  ): Promise<ProjectDocument> {
+    return await this.projectService.patchProject(id, dto);
+  }
+
+  @Delete('/:id')
+  async deleteProject(
+    @Param(':id', MongoIdPipe) id: string,
+  ): Promise<ProjectDocument> {
+    return await this.projectService.deleteProject(id);
   }
 }
