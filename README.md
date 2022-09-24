@@ -1,73 +1,72 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Ayberk documentation
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Ayberk is a client/server approach for storing and serving distributed configurations across multiple applications and environments in runtime. Also, it provides feature flag services.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Concepts
 
-## Description
+### Environment
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This concept is for dividing the environments. For example, a minimum setup should has 3 environments as development, staging and production.
 
-## Installation
+### Project
 
-```bash
-$ npm install
+An environment should include some projects.
+
+### Variables
+
+Any project has some variables. a variable consits of a key and a value. The key is a string and the value can be any type (e.g. string, number, object, etc)
+
+A variable has an scope. The scope can be a project or global. If the variable is a project variable, only the services that are authenticated to the defined project can access it and if the variable is a global variable, all of the projects of the environment have the access to use that.
+
+> Project level variables can override global variables (if the names are same)
+> 
+- Variables can be encrypted.
+
+### Consumer
+
+A consumer is a client that will be authenticated and use the variables.
+
+Consumer can interact with Ayberk’s server through HTTP - RESTful API or using the SDK.
+
+### Operator
+
+Any user (best to call them operators) that can create/modify/view environments, projects and variables. An operator in the condition of having the privileges, can:
+
+1. Register/delete/modify new operators and their privileges.
+2. Create environments
+3. Create projects
+4. Create variables for projects or environments (known as global variables)
+
+### Events (Future release)
+
+The server can send an event to the consumer in the case of a variable’s value change. This is useful to avoid applications to be restarted to read the updated variables. For using this feature, it’s better to use the AyberkSDK. 
+
+**Brain Storm:** Modules in the source code of a project, should be re-initialized after an event is sent. For instance database modules which is responsible to handle the connection to database, should run the `.connect()` method after the `Database.Reconnect` event is sent. In AyberkSDK we will have **EventListeners** that are responsible to trigger a functionality right after it receives a modification event. The event is an object including the event name and the variable. Like:
+
+```json
+{
+	"event": {
+		"eventName": "Database.Reconnect",
+		"announcedAt": "DateTime" 
+	},
+	"data": {
+		"variables": [
+			{
+				"key": "database-password",
+				"value": "newP@ssword"
+			}
+		],
+	}
+}
 ```
 
-## Running the app
+### Scheduler
 
-```bash
-# development
-$ npm run start
+An operator can schedule  modification of a variable. For example the modification can be applied on a specific group of environments/projects and even consumers.
 
-# watch mode
-$ npm run start:dev
+# FFs
 
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+1. Ayberk setup should be done using the front-end app and no `.yml` files should be used to setup the Ayberk.
+2. Upload `.env` files to import the variables
+3. Feature flags
+4. Variable modification scheduler
