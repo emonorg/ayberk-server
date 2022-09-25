@@ -7,7 +7,7 @@ export type OperatorSessionDocument = OperatorSession & Document;
 @Schema({ timestamps: true })
 export class OperatorSession {
   @Prop({ required: true, unique: true })
-  access_token: string;
+  accessToken: string;
 
   @Prop({
     required: true,

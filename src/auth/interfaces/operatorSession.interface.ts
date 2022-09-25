@@ -1,4 +1,4 @@
 export interface IOperatorSession {
-  access_token: string;
+  accessToken: string;
   ttl: number;
 }

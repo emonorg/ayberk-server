@@ -50,16 +50,16 @@ export class AuthService {
     const res = await this.opSessionModel.findOneAndUpdate(
       { operator },
       {
-        access_token: token,
+        accessToken: token,
         operator,
       },
     );
     if (!res)
       this.opSessionModel.create({
-        access_token: token,
+        accessToken: token,
         operator,
       });
 
-    return { access_token: token, ttl: 3600 };
+    return { accessToken: token, ttl: 3600 };
   }
 }
