@@ -70,3 +70,7 @@ An operator can schedule  modification of a variable. For example the modificati
 2. Upload `.env` files to import the variables
 3. Feature flags
 4. Variable modification scheduler
+
+## TODO
+[ ] Import all config variables from `config.yml` to settings module and use them by importing settings module in other modules
+[ ] Double check jwt signature

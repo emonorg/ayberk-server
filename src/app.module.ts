@@ -8,6 +8,7 @@ import { OperatorModule } from './operator/operator.module';
 import { SettingModule } from './setting/setting.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { ProjectModule } from './project/project.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ProjectModule } from './project/project.module';
     SettingModule,
     EnvironmentModule,
     ProjectModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

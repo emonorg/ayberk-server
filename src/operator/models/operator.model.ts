@@ -32,6 +32,9 @@ export class Operator {
   })
   privileges: Privilege[];
 
+  @Prop({ default: true })
+  isActive: boolean;
+
   @Prop({ default: now() })
   createdAt: Date;
 

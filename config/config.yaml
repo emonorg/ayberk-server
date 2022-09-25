@@ -1,6 +1,8 @@
 service:
   root_username: 'root'
   root_password: 'root_password'
+  operator_session_secret_key: 'secret'
+  consumer_session_secret_key: 'secret'
 
 database:
   host: 'localhost'

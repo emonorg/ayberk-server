@@ -70,4 +70,13 @@ export class OperatorService {
     newOperator.encryptedPassword = undefined; // TODO: Use Exclude decorator to exclude this field
     return newOperator;
   }
+
+  async getOperatorByUsername(username: string): Promise<OperatorDocument> {
+    const operator = await this.operatorModel
+      .findOne({ username, isActive: true })
+      .populate('privileges', 'domain actions -_id')
+      .exec();
+    if (!operator) throw Error('Invalid username');
+    return operator;
+  }
 }
