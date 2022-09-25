@@ -13,7 +13,7 @@ import { PatchEnvDto } from './dtos/patchEnv.dto';
 import { EnvironmentService } from './environment.service';
 import { EnvironmentDocument } from './models/environment.model';
 
-@Controller('env')
+@Controller('envs')
 export class EnvironmentController {
   constructor(private envService: EnvironmentService) {}
 

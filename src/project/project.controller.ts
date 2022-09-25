@@ -13,7 +13,7 @@ import { PatchProjectDto } from './dtos/patchProject.dto';
 import { Project, ProjectDocument } from './models/project.model';
 import { ProjectService } from './project.service';
 
-@Controller('project')
+@Controller('projects')
 export class ProjectController {
   constructor(private projectService: ProjectService) {}
 

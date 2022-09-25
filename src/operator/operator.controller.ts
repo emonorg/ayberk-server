@@ -4,7 +4,7 @@ import { CreateOperatorDto } from './dtos/createOperator.dto';
 import { OperatorDocument } from './models/operator.model';
 import { OperatorService } from './operator.service';
 
-@Controller('operator')
+@Controller('operators')
 export class OperatorController {
   constructor(private operatorService: OperatorService) {}
 
