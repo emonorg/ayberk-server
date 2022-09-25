@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { MongoIdPipe } from 'src/validators/pipes/mongoId.pipe';
+import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
 import { CreateProjectDto } from './dtos/createProject.dto';
 import { PatchProjectDto } from './dtos/patchProject.dto';
 import { Project, ProjectDocument } from './models/project.model';

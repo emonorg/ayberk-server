@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AuthenticatedRequest } from 'src/interfaces/authenticatedRequest.interface';
+import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { Operator } from 'src/operator/models/operator.model';
 import {
   IPrivilege,

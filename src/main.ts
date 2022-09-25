@@ -5,8 +5,8 @@ import { AuthorizationGuard } from './auth/guards/authorization.guard';
 import {
   MongoCastExceptionFilter,
   MongoExceptionFilter,
-} from './exceptions/mongo.exception';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+} from './lib/exceptions/mongo.exception';
+import { ResponseInterceptor } from './lib/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {});

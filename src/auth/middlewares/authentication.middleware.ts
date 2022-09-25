@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { request } from 'http';
-import { AuthenticatedRequest } from 'src/interfaces/authenticatedRequest.interface';
+import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { Operator } from 'src/operator/models/operator.model';
 import { AuthService } from '../auth.service';
 

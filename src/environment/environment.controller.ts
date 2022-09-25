@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { MongoIdPipe } from 'src/validators/pipes/mongoId.pipe';
+import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
 import { CreateEnvDto } from './dtos/createEnv.dto';
 import { PatchEnvDto } from './dtos/patchEnv.dto';
 import { EnvironmentService } from './environment.service';

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
-import { AuthenticatedRequest } from 'src/interfaces/authenticatedRequest.interface';
-import { MongoIdPipe } from 'src/validators/pipes/mongoId.pipe';
+import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
+import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
 import { CreateOperatorDto } from './dtos/createOperator.dto';
 import { Operator, OperatorDocument } from './models/operator.model';
 import { Action, PrivilegeDomain } from './models/privilege.model';
