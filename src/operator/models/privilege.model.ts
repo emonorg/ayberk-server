@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, now } from 'mongoose';
 import { Operator } from './operator.model';
 
-export enum PrivilegeDomains {
+export enum PrivilegeDomain {
   ALL = 'all',
   OPERATORS = 'operators',
   ENVS = 'environments',
@@ -17,6 +17,18 @@ export interface IActions {
   update?: boolean;
 }
 
+export enum Action {
+  CREATE = 'create',
+  READ = 'read',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
+export interface IPrivilege {
+  domain: PrivilegeDomain;
+  action: Action;
+}
+
 export type PrivilegeDocument = Privilege & Document;
 
 @Schema({ timestamps: true })
@@ -27,9 +39,9 @@ export class Privilege {
   @Prop({
     required: true,
     type: String,
-    enum: PrivilegeDomains,
+    enum: PrivilegeDomain,
   })
-  domain: PrivilegeDomains;
+  domain: PrivilegeDomain;
 
   @Prop({
     required: true,

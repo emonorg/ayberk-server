@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,6 +9,9 @@ import { SettingModule } from './setting/setting.module';
 import { EnvironmentModule } from './environment/environment.module';
 import { ProjectModule } from './project/project.module';
 import { AuthModule } from './auth/auth.module';
+import { AuthenticationMiddleware } from './auth/middlewares/authentication.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthorizationGuard } from './auth/guards/authorization.guard';
 
 @Module({
   imports: [
@@ -36,6 +39,20 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthorizationGuard,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthenticationMiddleware)
+      .exclude('service/health-check')
+      .exclude('auth/operator/sign-in')
+      .forRoutes('*');
+  }
+}

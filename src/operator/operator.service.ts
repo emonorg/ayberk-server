@@ -9,7 +9,7 @@ import {
   IActions,
   Privilege,
   PrivilegeDocument,
-  PrivilegeDomains,
+  PrivilegeDomain,
 } from './models/privilege.model';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class OperatorService {
   ) {}
 
   async createPrivilege(
-    domain: PrivilegeDomains,
+    domain: PrivilegeDomain,
     actions: IActions,
   ): Promise<PrivilegeDocument> {
     return await this.privilegeModel.create({
@@ -32,7 +32,7 @@ export class OperatorService {
   }
 
   async createRootOperator(): Promise<OperatorDocument> {
-    const privilege = await this.createPrivilege(PrivilegeDomains.ALL, {
+    const privilege = await this.createPrivilege(PrivilegeDomain.ALL, {
       manage: true,
     });
 

@@ -62,4 +62,18 @@ export class AuthService {
 
     return { accessToken: token, ttl: 3600 };
   }
+
+  async validateSessionAndGetOperator(
+    accessToken: string,
+  ): Promise<OperatorSessionDocument> {
+    const session = await this.opSessionModel
+      .findOne({ accessToken: accessToken })
+      .populate({
+        path: 'operator',
+        select: '-encryptedPassword', // TODO: Use exclude
+        populate: { path: 'privileges' },
+      })
+      .exec();
+    return session;
+  }
 }
