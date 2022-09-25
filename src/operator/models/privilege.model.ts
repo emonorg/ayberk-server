@@ -2,14 +2,22 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, now } from 'mongoose';
 import { Operator } from './operator.model';
 
-export type PrivilegeDocument = Privilege & Document;
-
-export interface IActions {
-  read: boolean;
-  write: boolean;
-  delete: boolean;
-  update: boolean;
+export enum PrivilegeDomains {
+  ALL = 'all',
+  OPERATORS = 'operators',
+  ENVS = 'environments',
+  PROJECTS = 'projects',
+  SETTINGS = 'settings',
 }
+export interface IActions {
+  manage: boolean;
+  read?: boolean;
+  create?: boolean;
+  delete?: boolean;
+  update?: boolean;
+}
+
+export type PrivilegeDocument = Privilege & Document;
 
 @Schema({ timestamps: true })
 export class Privilege {
@@ -18,8 +26,10 @@ export class Privilege {
 
   @Prop({
     required: true,
+    type: String,
+    enum: PrivilegeDomains,
   })
-  domain: string;
+  domain: PrivilegeDomains;
 
   @Prop({
     required: true,
