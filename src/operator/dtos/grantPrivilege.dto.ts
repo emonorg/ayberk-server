@@ -8,7 +8,7 @@ export class GrantPrivilegeDto {
   operatorId: string;
 
   @ApiProperty()
-  @IsEnum(PrivilegeDomain)
+  @IsEnum(PrivilegeDomain, { message: `domain should be one of ${Object.values(PrivilegeDomain)}` })
   domain: PrivilegeDomain;
 
   @ApiProperty()
