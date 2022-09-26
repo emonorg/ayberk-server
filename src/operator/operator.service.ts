@@ -22,28 +22,34 @@ export class OperatorService {
   ) {}
 
   async createPrivilege(
+    operator: OperatorDocument,
     domain: PrivilegeDomain,
     actions: IActions,
   ): Promise<PrivilegeDocument> {
-    return await this.privilegeModel.create({
+    const privilege = await this.privilegeModel.create({
+      operator: operator,
       domain: domain,
       actions: actions,
     });
+
+    await this.operatorModel.updateOne(
+      { operator },
+      { $push: { privileges: privilege } },
+    );
+
+    return privilege;
   }
 
   async createRootOperator(): Promise<OperatorDocument> {
-    const privilege = await this.createPrivilege(PrivilegeDomain.ALL, {
-      manage: true,
+    const rootOperator = await this.createOperator({
+      username: this.configService.get<string>('service.root_username'),
+      password: this.configService.get<string>('service.root_password'),
+      name: 'root',
     });
 
-    const rootOperator = await this.createOperator(
-      {
-        username: this.configService.get<string>('service.root_username'),
-        password: this.configService.get<string>('service.root_password'),
-        name: 'root',
-      },
-      privilege,
-    );
+    await this.createPrivilege(rootOperator, PrivilegeDomain.ALL, {
+      manage: true,
+    });
 
     return rootOperator;
   }
@@ -58,14 +64,10 @@ export class OperatorService {
     return id ? operators[0] : operators;
   }
 
-  async createOperator(
-    dto: CreateOperatorDto,
-    privilege?: PrivilegeDocument,
-  ): Promise<OperatorDocument> {
+  async createOperator(dto: CreateOperatorDto): Promise<OperatorDocument> {
     const newOperator = await this.operatorModel.create({
       ...dto,
       encryptedPassword: await Bcrypt.hash(dto.password, 10),
-      privileges: [privilege ? privilege : undefined],
     });
     newOperator.encryptedPassword = undefined; // TODO: Use Exclude decorator to exclude this field
     return newOperator;

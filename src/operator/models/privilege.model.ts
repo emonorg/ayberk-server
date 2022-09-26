@@ -33,7 +33,11 @@ export type PrivilegeDocument = Privilege & Document;
 
 @Schema({ timestamps: true })
 export class Privilege {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Operator' })
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Operator',
+  })
   operator: Operator;
 
   @Prop({
