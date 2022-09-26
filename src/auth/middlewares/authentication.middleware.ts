@@ -1,10 +1,10 @@
 import {
+  ForbiddenException,
   Injectable,
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { NextFunction, Request, Response } from 'express';
-import { request } from 'http';
+import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { Operator } from 'src/operator/models/operator.model';
 import { AuthService } from '../auth.service';
@@ -25,7 +25,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
       req.principle = operatorSession.operator;
       next();
     } catch (e) {
-      if (e instanceof TypeError) throw new UnauthorizedException();
+      if (e instanceof TypeError) throw new ForbiddenException();
     }
   }
 }
