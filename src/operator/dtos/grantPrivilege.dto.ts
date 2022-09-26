@@ -8,7 +8,7 @@ export class GrantPrivilegeDto {
   operatorId: string;
 
   @ApiProperty()
-  @IsEnum(PrivilegeDomain)
+  @IsEnum(PrivilegeDomain, { message:'enum should be all, privileges, environments, projects, settings' })
   domain: PrivilegeDomain;
 
   @ApiProperty()
