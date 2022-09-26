@@ -12,11 +12,19 @@ export class OperatorController {
   constructor(private operatorService: OperatorService) {}
 
   @Get()
+  @IsAuthorized({
+    domain: PrivilegeDomain.OPERATORS,
+    action: Action.READ,
+  })
   async getOperators(): Promise<OperatorDocument[] | OperatorDocument> {
     return await this.operatorService.getOperators();
   }
 
   @Get('/:id')
+  @IsAuthorized({
+    domain: PrivilegeDomain.OPERATORS,
+    action: Action.READ,
+  })
   async getOperator(
     @Param('id', MongoIdPipe) id: string,
   ): Promise<OperatorDocument[] | OperatorDocument> {
