@@ -5,6 +5,7 @@ import { Operator } from './operator.model';
 export enum PrivilegeDomain {
   ALL = 'all',
   OPERATORS = 'operators',
+  PRIVILEGE = 'privileges',
   ENVS = 'environments',
   PROJECTS = 'projects',
   SETTINGS = 'settings',
@@ -61,3 +62,4 @@ export class Privilege {
 }
 
 export const PrivilegeSchema = SchemaFactory.createForClass(Privilege);
+PrivilegeSchema.index({ operator: 1, domain: 1, actions: 1 }, { unique: true });

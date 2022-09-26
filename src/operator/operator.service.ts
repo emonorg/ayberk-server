@@ -11,6 +11,7 @@ import {
   PrivilegeDocument,
   PrivilegeDomain,
 } from './models/privilege.model';
+import { GrantPrivilegeDto } from './dtos/grantPrivilege.dto';
 
 @Injectable()
 export class OperatorService {
@@ -21,19 +22,32 @@ export class OperatorService {
     private privilegeModel: Model<PrivilegeDocument>,
   ) {}
 
+  // TODO: Use transaction session for this process
   async createPrivilege(
     operator: OperatorDocument,
     domain: PrivilegeDomain,
     actions: IActions,
   ): Promise<PrivilegeDocument> {
-    const privilege = await this.privilegeModel.create({
+    const existingPrivilege = await this.privilegeModel.findOne({
       operator: operator,
       domain: domain,
-      actions: actions,
     });
 
+    if (existingPrivilege)
+      return this.privilegeModel
+        .findOneAndUpdate({ operator, domain }, { actions }, { new: true })
+        .select('-operator');
+
+    const privilege = await this.privilegeModel.create({
+      operator,
+      domain,
+      actions,
+    });
+
+    privilege.operator = undefined;
+
     await this.operatorModel.updateOne(
-      { operator },
+      { _id: operator.id },
       { $push: { privileges: privilege } },
     );
 
@@ -80,5 +94,15 @@ export class OperatorService {
       .exec();
     if (!operator) throw Error('Invalid username');
     return operator;
+  }
+
+  async grantPrivilege(dto: GrantPrivilegeDto): Promise<PrivilegeDocument> {
+    const operator = await this.operatorModel.findOne({ _id: dto.operatorId });
+    const privilege = await this.createPrivilege(
+      operator,
+      dto.domain,
+      dto.actions,
+    );
+    return privilege;
   }
 }

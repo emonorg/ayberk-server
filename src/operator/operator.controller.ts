@@ -1,10 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
-import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
 import { CreateOperatorDto } from './dtos/createOperator.dto';
-import { Operator, OperatorDocument } from './models/operator.model';
-import { Action, PrivilegeDomain } from './models/privilege.model';
+import { GrantPrivilegeDto } from './dtos/grantPrivilege.dto';
+import { OperatorDocument } from './models/operator.model';
+import {
+  Action,
+  PrivilegeDocument,
+  PrivilegeDomain,
+} from './models/privilege.model';
 import { OperatorService } from './operator.service';
 
 @Controller('operators')
@@ -40,5 +44,16 @@ export class OperatorController {
     @Body() dto: CreateOperatorDto,
   ): Promise<OperatorDocument> {
     return await this.operatorService.createOperator(dto);
+  }
+
+  @Post('grant-privilege')
+  @IsAuthorized({
+    domain: PrivilegeDomain.PRIVILEGE,
+    action: Action.CREATE,
+  })
+  async grantPrivilege(
+    @Body() dto: GrantPrivilegeDto,
+  ): Promise<PrivilegeDocument> {
+    return await this.operatorService.grantPrivilege(dto);
   }
 }
