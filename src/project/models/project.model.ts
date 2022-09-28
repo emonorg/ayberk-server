@@ -14,6 +14,10 @@ export class Project {
   })
   name: string;
 
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Variable' }],
+    default: [],
+  })
   @Prop({ default: now() })
   createdAt: Date;
 

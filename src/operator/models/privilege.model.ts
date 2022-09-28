@@ -8,6 +8,7 @@ export enum PrivilegeDomain {
   PRIVILEGE = 'privileges',
   ENVS = 'environments',
   PROJECTS = 'projects',
+  VARIABLES = 'variables',
   SETTINGS = 'settings',
 }
 export interface IActions {
