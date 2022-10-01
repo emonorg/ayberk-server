@@ -1,11 +1,12 @@
 import * as Bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateOperatorDto } from './dtos/createOperator.dto';
 import { Operator, OperatorDocument } from './models/operator.model';
 import {
+  Action,
   IActions,
   Privilege,
   PrivilegeDocument,
@@ -27,20 +28,29 @@ export class OperatorService {
     operator: OperatorDocument,
     domain: PrivilegeDomain,
     actions: IActions,
+    entityId?: string,
   ): Promise<PrivilegeDocument> {
     const existingPrivilege = await this.privilegeModel.findOne({
-      operator: operator,
-      domain: domain,
+      operator,
+      domain,
+      entityId: entityId ? entityId : null,
     });
 
-    if (existingPrivilege)
+    // TODO: Check if entityId is valid
+    if (existingPrivilege) {
       return this.privilegeModel
-        .findOneAndUpdate({ operator, domain }, { actions }, { new: true })
+        .findOneAndUpdate(
+          entityId ? { operator, domain, entityId } : { operator, domain },
+          { actions },
+          { new: true },
+        )
         .select('-operator');
+    }
 
     const privilege = await this.privilegeModel.create({
       operator,
       domain,
+      entityId: entityId ? entityId : null,
       actions,
     });
 
@@ -98,11 +108,51 @@ export class OperatorService {
 
   async grantPrivilege(dto: GrantPrivilegeDto): Promise<PrivilegeDocument> {
     const operator = await this.operatorModel.findOne({ _id: dto.operatorId });
+    if (!operator) throw new BadRequestException('OperatorId is not valid!');
     const privilege = await this.createPrivilege(
       operator,
       dto.domain,
       dto.actions,
+      dto.entityId,
     );
     return privilege;
+  }
+
+  async getGrantedEntitiesIds(
+    domain: PrivilegeDomain,
+    operator: Operator,
+    action: Action,
+  ): Promise<unknown[]> {
+    const grantedEntities = await this.privilegeModel
+      .find({ operator, domain, [`actions.${action}`]: true })
+      .distinct('entityId');
+    return grantedEntities.map((p) => p?.toString());
+  }
+
+  async isEntityGranted(
+    domain: PrivilegeDomain,
+    operator: Operator,
+    entityId: string,
+    action: Action,
+  ): Promise<boolean> {
+    if (await this.hasManagePrivilege(operator, domain)) return true;
+    const grantedEntity = await this.privilegeModel.findOne({
+      operator,
+      domain,
+      entityId: entityId,
+      [`actions.${action}`]: true,
+    });
+    if (grantedEntity) return true;
+    return false;
+  }
+
+  async hasManagePrivilege(operator: Operator, domain: PrivilegeDomain) {
+    const privilege = await this.privilegeModel.findOne({
+      operator,
+      $or: [{ domain }, { domain: PrivilegeDomain.ALL }],
+      'actions.manage': true,
+    });
+    if (privilege) return true;
+    return false;
   }
 }

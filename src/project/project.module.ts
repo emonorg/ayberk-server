@@ -4,6 +4,7 @@ import { ProjectController } from './project.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Project, ProjectSchema } from './models/project.model';
 import { EnvironmentModule } from 'src/environment/environment.module';
+import { OperatorModule } from 'src/operator/operator.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EnvironmentModule } from 'src/environment/environment.module';
       },
     ]),
     forwardRef(() => EnvironmentModule),
+    OperatorModule,
   ],
   providers: [ProjectService],
   controllers: [ProjectController],
