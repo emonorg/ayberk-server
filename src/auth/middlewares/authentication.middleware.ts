@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { Operator } from 'src/operator/models/operator.model';
@@ -16,11 +20,13 @@ export class AuthenticationMiddleware implements NestMiddleware {
       const accessToken = req.headers.authorization.split(' ')[1];
       const operatorSession =
         await this.authService.validateSessionAndGetOperator(accessToken);
-      if (!operatorSession) throw new ForbiddenException();
+      if (!operatorSession)
+        return res.json(new UnauthorizedException()['response']);
       req.principle = operatorSession.operator;
       next();
     } catch (e) {
-      if (e instanceof TypeError) throw new ForbiddenException();
+      if (e instanceof TypeError)
+        return res.send(new UnauthorizedException()['response']);
     }
   }
 }
