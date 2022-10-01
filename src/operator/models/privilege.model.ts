@@ -50,6 +50,12 @@ export class Privilege {
   domain: PrivilegeDomain;
 
   @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
+  })
+  entityId: mongoose.Schema.Types.ObjectId;
+
+  @Prop({
     required: true,
     type: Object,
   })
@@ -63,4 +69,7 @@ export class Privilege {
 }
 
 export const PrivilegeSchema = SchemaFactory.createForClass(Privilege);
-PrivilegeSchema.index({ operator: 1, domain: 1, actions: 1 }, { unique: true });
+PrivilegeSchema.index(
+  { operator: 1, domain: 1, actions: 1, entityId: 1 },
+  { unique: true },
+);

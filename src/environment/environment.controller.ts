@@ -6,9 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
+import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
+import { Operator } from 'src/operator/models/operator.model';
 import { Action, PrivilegeDomain } from 'src/operator/models/privilege.model';
 import { CreateEnvDto } from './dtos/createEnv.dto';
 import { PatchEnvDto } from './dtos/patchEnv.dto';
@@ -33,8 +36,10 @@ export class EnvironmentController {
     domain: PrivilegeDomain.ENVS,
     action: Action.READ,
   })
-  async getEnvs(): Promise<EnvironmentDocument[] | EnvironmentDocument> {
-    return await this.envService.getEnvs();
+  async getEnvs(
+    @Req() req: AuthenticatedRequest<Operator>,
+  ): Promise<EnvironmentDocument[] | EnvironmentDocument> {
+    return await this.envService.getEnvs(req.principle);
   }
 
   @Get('/:id')
@@ -44,8 +49,9 @@ export class EnvironmentController {
   })
   async getEnv(
     @Param('id', MongoIdPipe) id: string,
+    @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<EnvironmentDocument[] | EnvironmentDocument> {
-    return await this.envService.getEnvs(id);
+    return await this.envService.getEnvs(req.principle, id);
   }
 
   @Patch('/:id')
@@ -56,8 +62,9 @@ export class EnvironmentController {
   async patchEnv(
     @Param('id', MongoIdPipe) id: string,
     @Body() dto: PatchEnvDto,
+    @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<EnvironmentDocument> {
-    return await this.envService.patchEnv(id, dto);
+    return await this.envService.patchEnv(req.principle, id, dto);
   }
 
   @Delete('/:id')
@@ -67,7 +74,8 @@ export class EnvironmentController {
   })
   async deleteEnv(
     @Param('id', MongoIdPipe) id: string,
+    @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<EnvironmentDocument> {
-    return await this.envService.deleteEnv(id);
+    return await this.envService.deleteEnv(req.principle, id);
   }
 }

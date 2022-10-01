@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import mongoose from 'mongoose';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { Operator } from 'src/operator/models/operator.model';
 import {
@@ -33,16 +34,16 @@ export class AuthorizationGuard implements CanActivate {
   ): boolean {
     for (const priPrivilege of PrinciplePrivileges) {
       if (
-        priPrivilege.domain === privilege.domain ||
-        priPrivilege.domain === PrivilegeDomain.ALL
+        priPrivilege.domain === PrivilegeDomain.ALL &&
+        priPrivilege.actions.manage
+      )
+        return true;
+
+      if (
+        priPrivilege.domain === privilege.domain &&
+        priPrivilege.actions[privilege.action]
       ) {
-        if (
-          priPrivilege.actions[privilege.action] ||
-          (priPrivilege.actions.manage &&
-            priPrivilege.domain === PrivilegeDomain.ALL)
-        ) {
-          return true;
-        }
+        return true;
       }
     }
     return false;

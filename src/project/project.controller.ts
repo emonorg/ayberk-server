@@ -6,9 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
+import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
+import { Operator } from 'src/operator/models/operator.model';
 import { Action, PrivilegeDomain } from 'src/operator/models/privilege.model';
 import { CreateProjectDto } from './dtos/createProject.dto';
 import { PatchProjectDto } from './dtos/patchProject.dto';
@@ -33,8 +36,10 @@ export class ProjectController {
     domain: PrivilegeDomain.PROJECTS,
     action: Action.READ,
   })
-  async getProjects(): Promise<ProjectDocument[] | Project> {
-    return await this.projectService.getProjects();
+  async getProjects(
+    @Req() req: AuthenticatedRequest<Operator>,
+  ): Promise<ProjectDocument[] | Project> {
+    return await this.projectService.getProjects(undefined, req.principle);
   }
 
   @Get('/:id')
@@ -44,8 +49,9 @@ export class ProjectController {
   })
   async getProject(
     @Param('id', MongoIdPipe) id: string,
+    @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<ProjectDocument[] | Project> {
-    return await this.projectService.getProjects(id);
+    return await this.projectService.getProjects(id, req.principle);
   }
 
   @Patch('/:id')
@@ -56,8 +62,9 @@ export class ProjectController {
   async patchProject(
     @Param('id', MongoIdPipe) id: string,
     @Body() dto: PatchProjectDto,
+    @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<ProjectDocument> {
-    return await this.projectService.patchProject(id, dto);
+    return await this.projectService.patchProject(req.principle, id, dto);
   }
 
   @Delete('/:id')
@@ -67,7 +74,8 @@ export class ProjectController {
   })
   async deleteProject(
     @Param(':id', MongoIdPipe) id: string,
+    @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<ProjectDocument> {
-    return await this.projectService.deleteProject(id);
+    return await this.projectService.deleteProject(req.principle, id);
   }
 }

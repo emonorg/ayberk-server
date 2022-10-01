@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, now } from 'mongoose';
 import { Environment } from 'src/environment/models/environment.model';
+import { Variable } from 'src/variable/models/variable.model';
 
 export type ProjectDocument = Project & Document;
 
@@ -18,6 +19,8 @@ export class Project {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Variable' }],
     default: [],
   })
+  variables: Variable[];
+
   @Prop({ default: now() })
   createdAt: Date;
 
