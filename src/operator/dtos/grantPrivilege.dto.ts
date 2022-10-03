@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsMongoId, IsObject, IsEnum, IsNotEmpty } from 'class-validator';
-import { IActions, PrivilegeDomain } from '../models/privilege.model';
+import { IActions, PrivilegeDomain } from '../../privilege/models/privilege.model';
 
 export class GrantPrivilegeDto {
   @ApiProperty()

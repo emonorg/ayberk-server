@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ABACService } from 'src/lib/abac/abac.service';
 import { Operator } from 'src/operator/models/operator.model';
-import { PrivilegeDomain } from 'src/operator/models/privilege.model';
+import { PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { ProjectDocument } from 'src/project/models/project.model';
 import { ProjectService } from 'src/project/project.service';
 import { CreateEnvDto } from './dtos/createEnv.dto';

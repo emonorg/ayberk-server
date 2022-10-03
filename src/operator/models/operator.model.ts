@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
 import mongoose, { Document, now } from 'mongoose';
-import { Privilege } from './privilege.model';
+import { Privilege } from '../../privilege/models/privilege.model';
 
 export type OperatorDocument = Operator & Document;
 

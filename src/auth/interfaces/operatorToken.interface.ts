@@ -1,4 +1,4 @@
-import { Privilege } from 'src/operator/models/privilege.model';
+import { Privilege } from 'src/privilege/models/privilege.model';
 
 export interface IOperatorToken {
   operatorId: string;

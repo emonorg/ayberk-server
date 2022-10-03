@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Operator, OperatorSchema } from './models/operator.model';
-import { Privilege, PrivilegeSchema } from './models/privilege.model';
+import { Privilege, PrivilegeSchema } from '../privilege/models/privilege.model';
 import { OperatorService } from './operator.service';
 import { OperatorController } from './operator.controller';
+import { PrivilegeModule } from 'src/privilege/privilege.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { OperatorController } from './operator.controller';
         schema: PrivilegeSchema,
       },
     ]),
+    PrivilegeModule,
   ],
   providers: [OperatorService],
   exports: [OperatorService],

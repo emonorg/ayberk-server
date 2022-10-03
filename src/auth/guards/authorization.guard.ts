@@ -7,7 +7,7 @@ import {
   IPrivilege,
   Privilege,
   PrivilegeDomain,
-} from 'src/operator/models/privilege.model';
+} from 'src/privilege/models/privilege.model';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
