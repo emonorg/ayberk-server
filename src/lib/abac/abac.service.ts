@@ -43,6 +43,11 @@ export abstract class ABACService<T> {
     populate?: any,
     select?: string,
   ) {
+    const ids = await this.privilegeService.getGrantedEntitiesIds(
+      this.domain,
+      operator,
+      Action.READ,
+    );
     if (await this.privilegeService.hasManagePrivilege(operator, this.domain)) {
       return await this.model
         .find({ ...filterOpts })
@@ -51,11 +56,6 @@ export abstract class ABACService<T> {
         .exec();
     }
     if (filterOpts === undefined) {
-      const ids = await this.privilegeService.getGrantedEntitiesIds(
-        this.domain,
-        operator,
-        Action.READ,
-      );
       return this.model
         .find({ ...filterOpts, _id: { $in: ids } })
         .populate(populate)
@@ -70,7 +70,7 @@ export abstract class ABACService<T> {
       );
       if (!isGranted) throw new ForbiddenException();
       return this.model
-        .find({ ...filterOpts })
+        .find({ ...filterOpts, _id: { $in: ids } })
         .populate(populate)
         .select(select)
         .exec();
@@ -81,6 +81,8 @@ export abstract class ABACService<T> {
     operator: Operator,
     filterOpts: any,
     updateQuery: any,
+    populate?: any,
+    select?: string,
   ) {
     const isGranted = await this.privilegeService.isEntityGranted(
       this.domain,
@@ -89,9 +91,13 @@ export abstract class ABACService<T> {
       Action.UPDATE,
     );
     if (!isGranted) throw new ForbiddenException();
-    return await this.model.findOneAndUpdate(filterOpts, updateQuery, {
-      new: true,
-    });
+    return await this.model
+      .findOneAndUpdate(filterOpts, updateQuery, {
+        new: true,
+      })
+      .populate(populate)
+      .select(select)
+      .exec();
   }
 
   async findOneAndDelete(operator: Operator, filterOpts: any) {
