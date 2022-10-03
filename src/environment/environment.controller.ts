@@ -12,7 +12,7 @@ import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
 import { Operator } from 'src/operator/models/operator.model';
-import { Action, PrivilegeDomain } from 'src/operator/models/privilege.model';
+import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { CreateEnvDto } from './dtos/createEnv.dto';
 import { PatchEnvDto } from './dtos/patchEnv.dto';
 import { EnvironmentService } from './environment.service';

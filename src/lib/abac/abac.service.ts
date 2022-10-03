@@ -1,12 +1,12 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Operator } from 'src/operator/models/operator.model';
-import { Action, PrivilegeDomain } from 'src/operator/models/privilege.model';
-import { OperatorService } from 'src/operator/operator.service';
+import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
+import { PrivilegeService } from 'src/privilege/privilege.service';
 
 @Injectable()
 export abstract class ABACService<T> {
-  @Inject() private operatorService: OperatorService;
+  @Inject() public privilegeService: PrivilegeService;
   constructor(private domain: PrivilegeDomain, readonly model: Model<T>) {}
 
   async getEntityId(filterOpts) {
@@ -17,13 +17,33 @@ export abstract class ABACService<T> {
     return entityId;
   }
 
+  async findOne(
+    operator: Operator,
+    filterOpts: any,
+    populate?: any,
+    select?: string,
+  ) {
+    const isGranted = await this.privilegeService.isEntityGranted(
+      this.domain,
+      operator,
+      await this.getEntityId(filterOpts),
+      Action.READ,
+    );
+    if (!isGranted) throw new ForbiddenException();
+    return this.model
+      .findOne({ ...filterOpts })
+      .populate(populate)
+      .select(select)
+      .exec();
+  }
+
   async find(
     operator: Operator,
     filterOpts: any,
     populate?: any,
     select?: string,
   ) {
-    if (await this.operatorService.hasManagePrivilege(operator, this.domain)) {
+    if (await this.privilegeService.hasManagePrivilege(operator, this.domain)) {
       return await this.model
         .find({ ...filterOpts })
         .populate(populate)
@@ -31,7 +51,7 @@ export abstract class ABACService<T> {
         .exec();
     }
     if (filterOpts === undefined) {
-      const ids = await this.operatorService.getGrantedEntitiesIds(
+      const ids = await this.privilegeService.getGrantedEntitiesIds(
         this.domain,
         operator,
         Action.READ,
@@ -42,7 +62,7 @@ export abstract class ABACService<T> {
         .select(select)
         .exec();
     } else {
-      const isGranted = await this.operatorService.isEntityGranted(
+      const isGranted = await this.privilegeService.isEntityGranted(
         this.domain,
         operator,
         await this.getEntityId(filterOpts),
@@ -62,7 +82,7 @@ export abstract class ABACService<T> {
     filterOpts: any,
     updateQuery: any,
   ) {
-    const isGranted = await this.operatorService.isEntityGranted(
+    const isGranted = await this.privilegeService.isEntityGranted(
       this.domain,
       operator,
       await this.getEntityId(filterOpts),
@@ -75,7 +95,7 @@ export abstract class ABACService<T> {
   }
 
   async findOneAndDelete(operator: Operator, filterOpts: any) {
-    const isGranted = await this.operatorService.isEntityGranted(
+    const isGranted = await this.privilegeService.isEntityGranted(
       this.domain,
       operator,
       await this.getEntityId(filterOpts),

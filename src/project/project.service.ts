@@ -11,7 +11,7 @@ import { Model } from 'mongoose';
 import { EnvironmentService } from 'src/environment/environment.service';
 import { ABACService } from 'src/lib/abac/abac.service';
 import { Operator } from 'src/operator/models/operator.model';
-import { PrivilegeDomain } from 'src/operator/models/privilege.model';
+import { PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { CreateProjectDto } from './dtos/createProject.dto';
 import { PatchProjectDto } from './dtos/patchProject.dto';
 import { Project, ProjectDocument } from './models/project.model';

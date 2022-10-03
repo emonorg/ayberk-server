@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
-import { Action, PrivilegeDomain } from 'src/operator/models/privilege.model';
+import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { CreateVariableDto } from './dtos/createVariable.dto';
 import { PatchVariableByIdDto } from './dtos/patchVariableById.dto';
 import { UpdateVariableByKeyDto } from './dtos/updateVariable.dto';

@@ -24,9 +24,8 @@ export class AuthService {
 
   async signIn(dto: OperatorSignInDto): Promise<IOperatorSession> {
     try {
-      const operator = await this.operatorService.getOperatorByUsername(
-        dto.username,
-      );
+      const operator =
+        await this.operatorService.internal_getOperatorByUsername(dto.username);
       const isPasswordMatching = await Bcrypt.compare(
         dto.password,
         operator.encryptedPassword,

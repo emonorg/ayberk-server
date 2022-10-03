@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, now } from 'mongoose';
-import { Operator } from './operator.model';
+import { Operator } from '../../operator/models/operator.model';
 
 export enum PrivilegeDomain {
   ALL = 'all',
