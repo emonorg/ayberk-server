@@ -13,6 +13,7 @@ import { AuthenticationMiddleware } from './auth/middlewares/authentication.midd
 import { APP_GUARD } from '@nestjs/core';
 import { AuthorizationGuard } from './auth/guards/authorization.guard';
 import { VariableModule } from './variable/variable.module';
+import { PrivilegeModule } from './privilege/privilege.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { VariableModule } from './variable/variable.module';
     ProjectModule,
     AuthModule,
     VariableModule,
+    PrivilegeModule,
   ],
   controllers: [AppController],
   providers: [
