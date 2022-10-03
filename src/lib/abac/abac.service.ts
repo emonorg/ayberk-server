@@ -12,7 +12,7 @@ export abstract class ABACService<T> {
   async getEntityId(filterOpts) {
     let entityId = null;
     if (!filterOpts.id)
-      entityId = await (await this.model.findOne(filterOpts))._id;
+      entityId = await (await this.model.findOne(filterOpts))?._id;
     else entityId = filterOpts._id;
     return entityId;
   }
@@ -55,26 +55,11 @@ export abstract class ABACService<T> {
         .select(select)
         .exec();
     }
-    if (filterOpts === undefined) {
-      return this.model
-        .find({ ...filterOpts, _id: { $in: ids } })
-        .populate(populate)
-        .select(select)
-        .exec();
-    } else {
-      const isGranted = await this.privilegeService.isEntityGranted(
-        this.domain,
-        operator,
-        await this.getEntityId(filterOpts),
-        Action.READ,
-      );
-      if (!isGranted) throw new ForbiddenException();
-      return this.model
-        .find({ ...filterOpts, _id: { $in: ids } })
-        .populate(populate)
-        .select(select)
-        .exec();
-    }
+    return this.model
+      .find({ ...filterOpts, _id: { $in: ids } })
+      .populate(populate)
+      .select(select)
+      .exec();
   }
 
   async findOneAndUpdate(
