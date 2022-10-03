@@ -13,7 +13,6 @@ export class Variable {
 
   @Prop({
     required: true,
-    unique: true,
   })
   key: string;
 
@@ -32,3 +31,4 @@ export class Variable {
 }
 
 export const VariableSchema = SchemaFactory.createForClass(Variable);
+VariableSchema.index({ project: 1, key: 1 }, { unique: true });

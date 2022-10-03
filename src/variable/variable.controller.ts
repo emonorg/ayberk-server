@@ -6,9 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
+import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
+import { Operator } from 'src/operator/models/operator.model';
 import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { CreateVariableDto } from './dtos/createVariable.dto';
 import { PatchVariableByIdDto } from './dtos/patchVariableById.dto';
@@ -26,10 +29,15 @@ export class VariableController {
     action: Action.READ,
   })
   async getVariableByKey(
+    @Req() req: AuthenticatedRequest<Operator>,
     @Param('projectId', MongoIdPipe) projectId: string,
     @Param('key') key: string,
   ): Promise<VariableValueType> {
-    return await this.variableService.getVariableValueByKey(projectId, key);
+    return await this.variableService.getVariableValueByKey(
+      req.principle,
+      projectId,
+      key,
+    );
   }
 
   @Get('/:projectId')
@@ -38,12 +46,16 @@ export class VariableController {
     action: Action.READ,
   })
   async getProjectVariables(
+    @Req() req: AuthenticatedRequest<Operator>,
     @Param('projectId', MongoIdPipe) projectId: string,
   ): Promise<VariableValueType> {
-    return await this.variableService.getProjectVariables(projectId);
+    return await this.variableService.getProjectVariables(
+      req.principle,
+      projectId,
+    );
   }
 
-  @Post('')
+  @Post()
   @IsAuthorized({ domain: PrivilegeDomain.VARIABLES, action: Action.READ })
   async createVariable(@Body() dto: CreateVariableDto) {
     return await this.variableService.createVariable(dto);
@@ -55,10 +67,11 @@ export class VariableController {
     action: Action.UPDATE,
   })
   async patchProject(
+    @Req() req: AuthenticatedRequest<Operator>,
     @Param('id', MongoIdPipe) id: string,
     @Body() dto: PatchVariableByIdDto,
   ): Promise<VariableDocument> {
-    return await this.variableService.patchVariableById(id, dto);
+    return await this.variableService.patchVariableById(req.principle, id, dto);
   }
 
   @Post('update')
@@ -67,9 +80,10 @@ export class VariableController {
     action: Action.UPDATE,
   })
   async updateVariableByKey(
+    @Req() req: AuthenticatedRequest<Operator>,
     @Body() dto: UpdateVariableByKeyDto,
   ): Promise<VariableValueType> {
-    return await this.variableService.updateVariableByKey(dto);
+    return await this.variableService.updateVariableByKey(req.principle, dto);
   }
 
   @Delete('/:id')
@@ -78,8 +92,9 @@ export class VariableController {
     action: Action.DELETE,
   })
   async deleteVariable(
+    @Req() req: AuthenticatedRequest<Operator>,
     @Param('id', MongoIdPipe) id: string,
   ): Promise<VariableValueType> {
-    return await this.variableService.deleteVariableById(id);
+    return await this.variableService.deleteVariableById(req.principle, id);
   }
 }

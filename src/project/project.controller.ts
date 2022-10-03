@@ -39,7 +39,7 @@ export class ProjectController {
   async getProjects(
     @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<ProjectDocument[] | Project> {
-    return await this.projectService.getProjects(undefined, req.principle);
+    return await this.projectService.getProjects(req.principle);
   }
 
   @Get('/:id')
@@ -51,7 +51,7 @@ export class ProjectController {
     @Param('id', MongoIdPipe) id: string,
     @Req() req: AuthenticatedRequest<Operator>,
   ): Promise<ProjectDocument[] | Project> {
-    return await this.projectService.getProjects(id, req.principle);
+    return await this.projectService.getProjects(req.principle, id);
   }
 
   @Patch('/:id')

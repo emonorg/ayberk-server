@@ -4,6 +4,7 @@ import { VariableController } from './variable.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Variable, VariableSchema } from './models/variable.model';
 import { ProjectModule } from 'src/project/project.module';
+import { PrivilegeModule } from 'src/privilege/privilege.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ProjectModule } from 'src/project/project.module';
       },
     ]),
     ProjectModule,
+    PrivilegeModule,
   ],
   providers: [VariableService],
   controllers: [VariableController],

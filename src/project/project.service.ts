@@ -26,6 +26,19 @@ export class ProjectService extends ABACService<ProjectDocument> {
     super(PrivilegeDomain.PROJECTS, projectModel);
   }
 
+  async internal_getProjects(
+    id?: string,
+  ): Promise<ProjectDocument[] | ProjectDocument> {
+    const projects = await this.projectModel
+      .find(id ? { _id: id } : undefined)
+      .populate({
+        path: 'environment',
+        select: '_id name',
+      })
+      .exec();
+    return id ? projects[0] : projects;
+  }
+
   async internal_deleteEnvProjects(id: string): Promise<void> {
     await this.projectModel.deleteMany({ environment: id });
   }
@@ -42,8 +55,8 @@ export class ProjectService extends ABACService<ProjectDocument> {
   }
 
   async getProjects(
+    operator: Operator,
     id?: string,
-    operator?: Operator,
   ): Promise<ProjectDocument[] | ProjectDocument> {
     const projects = await super.find(operator, id ? { _id: id } : undefined, {
       path: 'environment',
