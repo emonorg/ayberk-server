@@ -27,8 +27,11 @@ export class ProjectController {
     domain: PrivilegeDomain.PROJECTS,
     action: Action.CREATE,
   })
-  async createProject(@Body() dto: CreateProjectDto): Promise<ProjectDocument> {
-    return await this.projectService.createProject(dto);
+  async createProject(
+    @Req() req: AuthenticatedRequest<Operator>,
+    @Body() dto: CreateProjectDto,
+  ): Promise<ProjectDocument> {
+    return await this.projectService.createProject(req.principle, dto);
   }
 
   @Get()

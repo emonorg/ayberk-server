@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsObject, IsEnum, IsNotEmpty } from 'class-validator';
-import { IActions, PrivilegeDomain } from '../../privilege/models/privilege.model';
+import {
+  IsMongoId,
+  IsObject,
+  IsEnum,
+  IsNotEmpty,
+  ValidateIf,
+} from 'class-validator';
+import {
+  IActions,
+  PrivilegeDomain,
+} from '../../privilege/models/privilege.model';
 
 export class GrantPrivilegeDto {
   @ApiProperty()
@@ -13,6 +22,7 @@ export class GrantPrivilegeDto {
   })
   domain: PrivilegeDomain;
 
+  @ValidateIf((o) => !o.actions.create)
   @ApiProperty()
   @IsMongoId()
   @IsNotEmpty()

@@ -57,8 +57,11 @@ export class VariableController {
 
   @Post()
   @IsAuthorized({ domain: PrivilegeDomain.VARIABLES, action: Action.READ })
-  async createVariable(@Body() dto: CreateVariableDto) {
-    return await this.variableService.createVariable(dto);
+  async createVariable(
+    @Req() req: AuthenticatedRequest<Operator>,
+    @Body() dto: CreateVariableDto,
+  ) {
+    return await this.variableService.createVariable(req.principle, dto);
   }
 
   @Patch('/:id')

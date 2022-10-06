@@ -32,16 +32,23 @@ export class VariableService extends ABACService<VariableDocument> {
     await this.variableModel.deleteMany({ project });
   }
 
-  async createVariable(dto: CreateVariableDto): Promise<VariableDocument> {
+  async createVariable(
+    operator: Operator,
+    dto: CreateVariableDto,
+  ): Promise<VariableDocument> {
     const project = await this.projectService.internal_getProjects(
       dto.projectId,
     );
 
-    const createdVariable = await this.variableModel.create({
-      project,
-      key: dto.key,
-      value: dto.value,
-    });
+    const createdVariable = await super.create(
+      operator,
+      {
+        project,
+        key: dto.key,
+        value: dto.value,
+      },
+      new CreateVariableDto(),
+    );
 
     return createdVariable;
   }

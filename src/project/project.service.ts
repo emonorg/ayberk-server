@@ -55,13 +55,20 @@ export class ProjectService extends ABACService<ProjectDocument> {
     await this.projectModel.deleteMany({ environment: id });
   }
 
-  async createProject(dto: CreateProjectDto): Promise<ProjectDocument> {
+  async createProject(
+    operator: Operator,
+    dto: CreateProjectDto,
+  ): Promise<ProjectDocument> {
     const env = await this.envService.internal_getEnvs(dto.envId);
     if (!env) throw new NotFoundException('Env not found!');
-    const newProject = await this.projectModel.create({
-      ...dto,
-      environment: dto.envId,
-    });
+    const newProject = await super.create(
+      operator,
+      {
+        ...dto,
+        environment: dto.envId,
+      },
+      new CreateProjectDto(),
+    );
     return newProject;
   }
 
