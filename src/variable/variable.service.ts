@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { EnvironmentDocument } from 'src/environment/models/environment.model';
 import { ABACService } from 'src/lib/abac/abac.service';
 import { Operator } from 'src/operator/models/operator.model';
 import { PrivilegeDomain } from 'src/privilege/models/privilege.model';
+import { ProjectDocument } from 'src/project/models/project.model';
 import { ProjectService } from 'src/project/project.service';
 import { CreateVariableDto } from './dtos/createVariable.dto';
 import { PatchVariableByIdDto } from './dtos/patchVariableById.dto';
@@ -18,20 +20,30 @@ import {
 export class VariableService extends ABACService<VariableDocument> {
   constructor(
     @InjectModel(Variable.name) private variableModel: Model<VariableDocument>,
+    @Inject(forwardRef(() => ProjectService))
     private projectService: ProjectService,
   ) {
     super(PrivilegeDomain.VARIABLES, variableModel);
+  }
+
+  async internal_deleteProjectVariables(
+    project: ProjectDocument,
+  ): Promise<void> {
+    await this.variableModel.deleteMany({ project });
   }
 
   async createVariable(dto: CreateVariableDto): Promise<VariableDocument> {
     const project = await this.projectService.internal_getProjects(
       dto.projectId,
     );
-    return await this.variableModel.create({
+
+    const createdVariable = await this.variableModel.create({
       project,
       key: dto.key,
       value: dto.value,
     });
+
+    return createdVariable;
   }
 
   async getVariableValueByKey(

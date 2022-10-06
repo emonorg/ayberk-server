@@ -27,16 +27,6 @@ export class EnvironmentService extends ABACService<EnvironmentDocument> {
     super(PrivilegeDomain.ENVS, envModel);
   }
 
-  async internal_addProjectToEnv(
-    envId: string,
-    project: ProjectDocument,
-  ): Promise<void> {
-    await this.envModel.updateOne(
-      { id: envId },
-      { $push: { projects: project } },
-    );
-  }
-
   async internal_getEnvs(
     id?: string,
   ): Promise<EnvironmentDocument[] | EnvironmentDocument> {

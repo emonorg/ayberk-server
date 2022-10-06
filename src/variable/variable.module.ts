@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { VariableService } from './variable.service';
 import { VariableController } from './variable.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,10 +14,11 @@ import { PrivilegeModule } from 'src/privilege/privilege.module';
         name: Variable.name,
       },
     ]),
-    ProjectModule,
+    forwardRef(() => ProjectModule),
     PrivilegeModule,
   ],
   providers: [VariableService],
+  exports: [VariableService],
   controllers: [VariableController],
 })
 export class VariableModule {}
