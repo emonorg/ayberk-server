@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { Operator } from 'src/operator/models/operator.model';
 import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { PrivilegeService } from 'src/privilege/privilege.service';
+import { ICreateDto } from '../dto/create.dto';
 
 @Injectable()
 export abstract class ABACService<T> {
@@ -15,6 +16,17 @@ export abstract class ABACService<T> {
       entityId = await (await this.model.findOne(filterOpts))?._id;
     else entityId = filterOpts._id;
     return entityId;
+  }
+
+  async create(operator: Operator, data: any, dto: ICreateDto): Promise<T> {
+    const isGranted = await this.privilegeService.isEntityGranted(
+      dto.getParentEntityData().domain,
+      operator,
+      data[dto.getParentEntityData().parentKeyInChild],
+      Action.CREATE,
+    );
+    if (!isGranted) throw new ForbiddenException();
+    return await this.model.create(data);
   }
 
   async findOne(
