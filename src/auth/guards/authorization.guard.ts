@@ -1,6 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import mongoose from 'mongoose';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { Operator } from 'src/operator/models/operator.model';
 import {
