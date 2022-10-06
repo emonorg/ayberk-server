@@ -6,6 +6,7 @@ import { Project, ProjectSchema } from './models/project.model';
 import { EnvironmentModule } from 'src/environment/environment.module';
 import { OperatorModule } from 'src/operator/operator.module';
 import { PrivilegeModule } from 'src/privilege/privilege.module';
+import { VariableModule } from 'src/variable/variable.module';
 
 @Module({
   imports: [
@@ -16,11 +17,12 @@ import { PrivilegeModule } from 'src/privilege/privilege.module';
       },
     ]),
     forwardRef(() => EnvironmentModule),
+    forwardRef(() => VariableModule),
     OperatorModule,
     PrivilegeModule,
   ],
   providers: [ProjectService],
-  controllers: [ProjectController],
   exports: [ProjectService],
+  controllers: [ProjectController],
 })
 export class ProjectModule {}

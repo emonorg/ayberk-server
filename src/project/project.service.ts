@@ -12,6 +12,8 @@ import { EnvironmentService } from 'src/environment/environment.service';
 import { ABACService } from 'src/lib/abac/abac.service';
 import { Operator } from 'src/operator/models/operator.model';
 import { PrivilegeDomain } from 'src/privilege/models/privilege.model';
+import { VariableDocument } from 'src/variable/models/variable.model';
+import { VariableService } from 'src/variable/variable.service';
 import { CreateProjectDto } from './dtos/createProject.dto';
 import { PatchProjectDto } from './dtos/patchProject.dto';
 import { Project, ProjectDocument } from './models/project.model';
@@ -22,8 +24,18 @@ export class ProjectService extends ABACService<ProjectDocument> {
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @Inject(forwardRef(() => EnvironmentService))
     private envService: EnvironmentService,
+    @Inject(forwardRef(() => VariableService))
+    private variableService: VariableService,
   ) {
     super(PrivilegeDomain.PROJECTS, projectModel);
+  }
+
+  async internal_pullVariableFromProject(
+    variable: VariableDocument,
+  ): Promise<void> {
+    await (
+      await variable.populate('project')
+    ).updateOne({ $pull: { 'variables._id': variable._id } });
   }
 
   async internal_getProjects(
@@ -50,7 +62,6 @@ export class ProjectService extends ABACService<ProjectDocument> {
       ...dto,
       environment: dto.envId,
     });
-    await this.envService.internal_addProjectToEnv(dto.envId, newProject);
     return newProject;
   }
 
@@ -82,6 +93,8 @@ export class ProjectService extends ABACService<ProjectDocument> {
     });
     if (!deletedProject)
       throw new HttpException('Invalid project id!', HttpStatus.BAD_REQUEST);
+
+    await this.variableService.internal_deleteProjectVariables(deletedProject);
     return deletedProject;
   }
 }
