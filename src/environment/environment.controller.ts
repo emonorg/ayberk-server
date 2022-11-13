@@ -11,7 +11,7 @@ import {
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
-import { Operator } from 'src/operator/models/operator.model';
+import { Operator, OperatorDocument } from 'src/operator/models/operator.model';
 import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { CreateEnvDto } from './dtos/createEnv.dto';
 import { PatchEnvDto } from './dtos/patchEnv.dto';
@@ -27,8 +27,11 @@ export class EnvironmentController {
     domain: PrivilegeDomain.ENVS,
     action: Action.CREATE,
   })
-  async createEnv(@Body() dto: CreateEnvDto): Promise<EnvironmentDocument> {
-    return await this.envService.createEnv(dto);
+  async createEnv(
+    @Req() req: AuthenticatedRequest<OperatorDocument>,
+    @Body() dto: CreateEnvDto,
+  ): Promise<EnvironmentDocument> {
+    return await this.envService.createEnv(req.principle, dto);
   }
 
   @Get()
