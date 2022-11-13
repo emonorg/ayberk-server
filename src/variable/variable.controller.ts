@@ -11,7 +11,7 @@ import {
 import { IsAuthorized } from 'src/auth/decorators/isAuthorized.decorator';
 import { AuthenticatedRequest } from 'src/lib/interfaces/authenticatedRequest.interface';
 import { MongoIdPipe } from 'src/lib/validators/pipes/mongoId.pipe';
-import { Operator } from 'src/operator/models/operator.model';
+import { Operator, OperatorDocument } from 'src/operator/models/operator.model';
 import { Action, PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { CreateVariableDto } from './dtos/createVariable.dto';
 import { PatchVariableByIdDto } from './dtos/patchVariableById.dto';
@@ -58,7 +58,7 @@ export class VariableController {
   @Post()
   @IsAuthorized({ domain: PrivilegeDomain.VARIABLES, action: Action.READ })
   async createVariable(
-    @Req() req: AuthenticatedRequest<Operator>,
+    @Req() req: AuthenticatedRequest<OperatorDocument>,
     @Body() dto: CreateVariableDto,
   ) {
     return await this.variableService.createVariable(req.principle, dto);
