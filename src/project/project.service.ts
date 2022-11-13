@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EnvironmentService } from 'src/environment/environment.service';
 import { ABACService } from 'src/lib/abac/abac.service';
-import { Operator } from 'src/operator/models/operator.model';
+import { Operator, OperatorDocument } from 'src/operator/models/operator.model';
 import { PrivilegeDomain } from 'src/privilege/models/privilege.model';
 import { VariableDocument } from 'src/variable/models/variable.model';
 import { VariableService } from 'src/variable/variable.service';
@@ -56,7 +56,7 @@ export class ProjectService extends ABACService<ProjectDocument> {
   }
 
   async createProject(
-    operator: Operator,
+    operator: OperatorDocument,
     dto: CreateProjectDto,
   ): Promise<ProjectDocument> {
     const env = await this.envService.internal_getEnvs(dto.envId);
@@ -68,6 +68,18 @@ export class ProjectService extends ABACService<ProjectDocument> {
         environment: dto.envId,
       },
       new CreateProjectDto(),
+    );
+    await this.privilegeService.createPrivilege(
+      operator.id,
+      PrivilegeDomain.PROJECTS,
+      {
+        create: true,
+        read: true,
+        delete: true,
+        update: true,
+        manage: true,
+      },
+      newProject.id,
     );
     return newProject;
   }
