@@ -14,6 +14,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthorizationGuard } from './auth/guards/authorization.guard';
 import { VariableModule } from './variable/variable.module';
 import { PrivilegeModule } from './privilege/privilege.module';
+import { LoggerMiddleware } from './lib/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -28,9 +29,9 @@ import { PrivilegeModule } from './privilege/privilege.module';
           'database.user',
         )}:${configService.get('database.password')}@${configService.get(
           'database.host',
-        )}:${configService.get(
-          'database.port',
-        )}/ayberk?authSource=admin&readPreference=primary&directConnection=true&ssl=false`,
+        )}:${configService.get('database.port')}/${configService.get(
+          'database.database',
+        )}?authSource=admin&readPreference=primary&directConnection=true&ssl=false`,
       }),
       inject: [ConfigService],
     }),
@@ -55,8 +56,8 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      .exclude('service/health-check')
-      .exclude('auth/operator/sign-in')
+      .exclude('service/health-check', 'auth/operator/sign-in')
       .forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

@@ -17,7 +17,7 @@ export class Operator {
     required: true,
   })
   @Exclude()
-  encryptedPassword: string;
+  passwordHash: string;
 
   @Prop({
     required: true,

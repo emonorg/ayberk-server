@@ -3,5 +3,6 @@
     "ABAC",
     "Ayberk",
     "errmsg"
-  ]
+  ],
+  "editor.formatOnSave": true
 }

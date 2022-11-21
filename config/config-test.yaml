@@ -5,7 +5,7 @@ service:
   consumer_session_secret_key: 'secret'
 
 database:
-  database: 'ayberk'
+  database: 'ayberk-test'
   host: 'localhost'
   port: '27017'
   user: 'root' 

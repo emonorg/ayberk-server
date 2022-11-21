@@ -11,6 +11,7 @@ export class AppController {
       status: 'OK',
       startTime: this.appService.startTime,
       version: this.appService.AYBERK_VERSION,
+      ayberkLogMem: this.appService.logMem,
     };
   }
 }

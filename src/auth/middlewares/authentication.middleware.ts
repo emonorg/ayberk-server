@@ -21,12 +21,12 @@ export class AuthenticationMiddleware implements NestMiddleware {
       const operatorSession =
         await this.authService.validateSessionAndGetOperator(accessToken);
       if (!operatorSession)
-        return res.json(new UnauthorizedException()['response']);
+        return res.status(401).json(new UnauthorizedException()['response']);
       req.principle = operatorSession.operator;
       next();
     } catch (e) {
       if (e instanceof TypeError)
-        return res.send(new UnauthorizedException()['response']);
+        return res.status(401).send(new UnauthorizedException()['response']);
     }
   }
 }

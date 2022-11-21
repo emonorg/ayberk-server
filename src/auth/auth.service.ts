@@ -1,4 +1,4 @@
-import * as Bcrypt from 'bcrypt';
+import { createHmac } from 'crypto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { OperatorService } from 'src/operator/operator.service';
 import { OperatorSignInDto } from './dtos/operatorSignIn.dto';
@@ -12,6 +12,7 @@ import {
   OperatorSessionDocument,
 } from './models/operatorSession.model';
 import { Model } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -20,17 +21,21 @@ export class AuthService {
     private opSessionModel: Model<OperatorSessionDocument>,
     private operatorService: OperatorService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async signIn(dto: OperatorSignInDto): Promise<IOperatorSession> {
     try {
       const operator =
         await this.operatorService.internal_getOperatorByUsername(dto.username);
-      const isPasswordMatching = await Bcrypt.compare(
-        dto.password,
-        operator.encryptedPassword,
-      );
-      if (!isPasswordMatching) throw new UnauthorizedException();
+      const passwordHash = await createHmac(
+        'sha256',
+        this.configService.get('encryption.secret'),
+      )
+        .update(dto.password)
+        .digest('hex');
+      if (passwordHash !== operator.passwordHash)
+        throw new UnauthorizedException();
       return await this.createOperatorSession(operator);
     } catch (e) {
       throw new UnauthorizedException();
@@ -69,7 +74,7 @@ export class AuthService {
       .findOne({ accessToken: accessToken })
       .populate({
         path: 'operator',
-        select: '-encryptedPassword', // TODO: Use exclude
+        select: '-passwordHash', // TODO: Use exclude
         populate: { path: 'privileges' },
       })
       .exec();

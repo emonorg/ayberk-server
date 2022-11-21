@@ -1,4 +1,4 @@
-import * as Bcrypt from 'bcrypt';
+import { createHmac } from 'crypto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
@@ -58,7 +58,7 @@ export class OperatorService extends ABACService<OperatorDocument> {
       operator,
       id ? { _id: id } : undefined,
       'privileges',
-      '-encryptedPassword',
+      '-passwordHash',
     );
     return id ? operators[0] : operators;
   }
@@ -66,9 +66,14 @@ export class OperatorService extends ABACService<OperatorDocument> {
   async createOperator(dto: CreateOperatorDto): Promise<OperatorDocument> {
     const newOperator = await this.operatorModel.create({
       ...dto,
-      encryptedPassword: await Bcrypt.hash(dto.password, 10),
+      passwordHash: await createHmac(
+        'sha256',
+        this.configService.get('encryption.secret'),
+      )
+        .update(dto.password)
+        .digest('hex'),
     });
-    newOperator.encryptedPassword = undefined; // TODO: Use Exclude decorator to exclude this field
+    newOperator.passwordHash = undefined; // TODO: Use Exclude decorator to exclude this field
     return newOperator;
   }
 
